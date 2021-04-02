@@ -1,7 +1,7 @@
 defmodule PentoWeb.WrongLive do
   use PentoWeb, :live_view
 
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     number = :rand.uniform(10)
 
     {
@@ -9,10 +9,11 @@ defmodule PentoWeb.WrongLive do
       assign(
         socket,
         score: 0,
-        time: time(),
         won: false,
         message: "Guess a number.",
-        number: number
+        number: number,
+	user: Pento.Accounts.get_user_by_session_token(session["user_token"]),
+	session_id: session["live_socket_id"]
       )
     }
   end
@@ -34,11 +35,11 @@ defmodule PentoWeb.WrongLive do
         <% end %>
       <% end %>
     </h2>
+    <pre>
+	<%= @user.email %>
+	<%= @session_id %>
+    </pre>
     """
-  end
-
-  def time() do
-    DateTime.utc_now() |> to_string()
   end
 
   def handle_event(
@@ -46,8 +47,6 @@ defmodule PentoWeb.WrongLive do
         %{"number" => guess} = data,
         %{assigns: %{number: number, score: score}} = socket
       ) do
-    IO.inspect(socket)
-    IO.inspect(data)
 
     {guess_integer, _} = Integer.parse(guess)
 
