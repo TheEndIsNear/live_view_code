@@ -3,6 +3,7 @@ defmodule PentoWeb.PageLive do
 
   @impl true
   def mount(_params, _session, socket) do
+    number = :rand.uniform(10)
     {:ok, assign(socket, query: "", results: %{})}
   end
 

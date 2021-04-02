@@ -2,13 +2,17 @@ defmodule PentoWeb.WrongLive do
   use PentoWeb, :live_view
 
   def mount(_params, _session, socket) do
+    number = :rand.uniform(10)
+
     {
       :ok,
       assign(
         socket,
         score: 0,
         time: time(),
-        message: "Guess a number."
+        won: false,
+        message: "Guess a number.",
+        number: number
       )
     }
   end
@@ -18,11 +22,16 @@ defmodule PentoWeb.WrongLive do
     <h1>Your score: <%= @score %></h1>
     <h2>
       <%= @message %>
-      It's <%= @time %>
     </h2>
     <h2>
-      <%= for n <- 1..10 do %>
-        <a href="#" phx-click="guess" phx-value-number="<%= n %>"><%= n %></a>
+      <%= if @won do %>
+    <%= live_patch to: Routes.live_path(PentoWeb.Endpoint, PentoWeb.WrongLive) do %>
+          Play again
+        <% end %>
+      <% else %>
+        <%= for n <- 1..10 do %>
+          <a href="#" phx-click="guess" phx-value-number="<%= n %>"><%= n %></a>
+        <% end %>
       <% end %>
     </h2>
     """
@@ -32,12 +41,29 @@ defmodule PentoWeb.WrongLive do
     DateTime.utc_now() |> to_string()
   end
 
-  def handle_event("guess", %{"number" => guess} = data, socket) do
+  def handle_event(
+        "guess",
+        %{"number" => guess} = data,
+        %{assigns: %{number: number, score: score}} = socket
+      ) do
+    IO.inspect(socket)
     IO.inspect(data)
-    message = "Your guess: #{guess}. Wrong. Guess again. "
-    score = socket.assigns.score - 1
-    time = time()
 
-    {:noreply, assign(socket, message: message, score: score, time: time)}
+    {guess_integer, _} = Integer.parse(guess)
+
+    if guess_integer == number do
+      message = "You guessed correctly! Congratulations"
+      score = score + 5
+      {:noreply, assign(socket, message: message, score: score, won: true)}
+    else
+      message = "Your guess: #{guess}. Wrong. Guess again. "
+      score = score - 1
+      {:noreply, assign(socket, message: message, score: score)}
+    end
+  end
+
+  def handle_params(_params, _, socket) do
+    number = :rand.uniform(10)
+    {:noreply, assign(socket, won: false, number: number)}
   end
 end
