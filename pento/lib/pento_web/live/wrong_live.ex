@@ -37,14 +37,14 @@ defmodule PentoWeb.WrongLive do
     </h2>
     <pre>
     <%= @user.email %>
-    <%= @session_id %>
+    <%= @user.username %>
     </pre>
     """
   end
 
   def handle_event(
         "guess",
-        %{"number" => guess} = data,
+        %{"number" => guess},
         %{assigns: %{number: number, score: score}} = socket
       ) do
     {guess_integer, _} = Integer.parse(guess)
