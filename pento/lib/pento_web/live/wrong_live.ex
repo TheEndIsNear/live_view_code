@@ -12,8 +12,8 @@ defmodule PentoWeb.WrongLive do
         won: false,
         message: "Guess a number.",
         number: number,
-	user: Pento.Accounts.get_user_by_session_token(session["user_token"]),
-	session_id: session["live_socket_id"]
+        user: Pento.Accounts.get_user_by_session_token(session["user_token"]),
+        session_id: session["live_socket_id"]
       )
     }
   end
@@ -36,8 +36,8 @@ defmodule PentoWeb.WrongLive do
       <% end %>
     </h2>
     <pre>
-	<%= @user.email %>
-	<%= @session_id %>
+    <%= @user.email %>
+    <%= @session_id %>
     </pre>
     """
   end
@@ -47,7 +47,6 @@ defmodule PentoWeb.WrongLive do
         %{"number" => guess} = data,
         %{assigns: %{number: number, score: score}} = socket
       ) do
-
     {guess_integer, _} = Integer.parse(guess)
 
     if guess_integer == number do
