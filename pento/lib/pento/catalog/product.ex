@@ -12,6 +12,18 @@ defmodule Pento.Catalog.Product do
   end
 
   @doc false
+  def changeset(%{unit_price: current_price} = product, %{price_decrease: price_decrease}) do
+    if price_decrease > 0 do
+      attrs = %{unit_price: current_price - price_decrease}
+      changeset(product, attrs)
+    else
+      product
+      |> changeset(%{})
+      |> add_error(:price_decrease, "cannot have a negative price decrease")
+    end
+  end
+
+  @doc false
   def changeset(product, attrs) do
     product
     |> cast(attrs, [:name, :description, :unit_price, :sku])

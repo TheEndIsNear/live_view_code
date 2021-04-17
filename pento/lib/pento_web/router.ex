@@ -17,7 +17,6 @@ defmodule PentoWeb.Router do
     plug :accepts, ["json"]
   end
 
-
   scope "/", PentoWeb do
     pipe_through [:browser, :require_authenticated_user]
 
@@ -29,7 +28,6 @@ defmodule PentoWeb.Router do
 
     live "/products/:id", ProductLive.Show, :show
     live "/products/:id/show/edit", ProductLive.Show, :edit
-
   end
 
   # Other scopes may use custom stacks.
