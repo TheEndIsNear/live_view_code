@@ -17,10 +17,19 @@ defmodule PentoWeb.Router do
     plug :accepts, ["json"]
   end
 
+
   scope "/", PentoWeb do
     pipe_through [:browser, :require_authenticated_user]
 
     live "/guess", WrongLive
+
+    live "/products", ProductLive.Index, :index
+    live "/products/new", ProductLive.Index, :new
+    live "/products/:id/edit", ProductLive.Index, :edit
+
+    live "/products/:id", ProductLive.Show, :show
+    live "/products/:id/show/edit", ProductLive.Show, :edit
+
   end
 
   # Other scopes may use custom stacks.
